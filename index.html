@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <title>Tape Reading</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="gfr">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    </head>
+    <body style="background-color: #172B4D;">
+        <div class="container">
+            <h1 class="text-light mt-5">"Tape Reading" BitCoinTrade&nbsp;<small class="text-muted">v0.1.1</small></h1>
+            <span class="badge badge-warning p-1" id="dataAtualizacao">&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <div class="row mt-5">
+                <div class="col">
+                    <div class="card-columns">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="text-center">
+                                    <span id="ultValNegociacao">...</span>
+                                    <br>
+                                    <small class="text-muted">Valor da Última Negociação</small>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="text-center"><span id="maiorValor24h"></span><br><small class="text-muted">Maior valor de negociação nas últimas 24 horas</small></p>
+                                <p class="text-center"><span id="menorValor24h"></span><br><small class="text-muted">Menor valor de negociação nas últimas 24 horas</small></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="text-center"><span id="volume24h"></span><br><small class="text-muted">Quantidade negociada nas últimas 24 horas</small></p>
+                                <p class="text-center"><span id="qtdeTrade24h"></span><br><small class="text-muted">Quantidade de trades realizados nas últimas 24 horas</small></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="text-center"><span id="valUniMelhorCompra"></span><br><small class="text-muted">Valor unitário da melhor oferta de compra atual no book de ofertas</small></p>
+                                <p class="text-center"><span id="valUniMelhorVenda"></span><br><small class="text-muted">Valor unitário da melhor oferta de venda atual no book de ofertas</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer text-dark">
+            <div class="container">
+            </div>
+        </footer>
+        <style media="screen">
+            html {
+              position: relative;
+              min-height: 100%;
+            }
+            body {
+              margin-bottom: 60px; /* Margin bottom by footer height */
+            }
+            .footer {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                /* Set the fixed height of the footer here */
+                height: 60px;
+                line-height: 60px; /* Vertically center the text there */
+                background-color: #EBECF0;
+                border-top: 1px solid #DFE1E5;
+            }
+            .card-body {
+                font-weight: bold;
+                background-color: #FFF;
+            }
+            #dataAtualizacao {
+                width: 180px;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            $(function() {
+
+                (function getTickers() {
+                    $('#dataAtualizacao').html("&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                    $.getJSON('https://api.bitcointrade.com.br/v1/public/BTC/ticker', function (response) {
+                        if (response.message == null) {
+                            ultValNegociacao = response.data.last
+                                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2});
+                            document.title = ultValNegociacao + ' - ' + 'Tape Reading';
+                            $('#ultValNegociacao')
+                                .html(
+                                    response.data.last
+                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2})
+                                );
+                            $('#maiorValor24h').html(response.data.high.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+                            $('#menorValor24h').html(response.data.low.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+                            $('#volume24h').html(response.data.volume.toLocaleString('pt-BR'));
+                            $('#qtdeTrade24h').html(response.data.trades_quantity.toLocaleString('pt-BR'));
+                            $('#valUniMelhorVenda').html(response.data.sell.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+                            $('#valUniMelhorCompra').html(response.data.buy.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+
+                            dataAtualizacao = new Date(response.data.date);
+
+                            $('#dataAtualizacao').html(dataAtualizacao.toLocaleString());
+                        }
+                        console.log(response);
+                        setTimeout(getTickers, 15000);
+                    });
+                }());
+            });
+        </script>
+    </body>
+</html>
