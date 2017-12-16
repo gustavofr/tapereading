@@ -1,6 +1,6 @@
 # tapereading
 
-Criei este projeto para resolver um problema que eu tinha. Estou estudando trade de bitcoin e utilizo a [BitCoinTrade](bitcointrade.com.br) para fazer minhas transações. Acompanhava a cotação do bitcoin pelo próprio site da BitCoinTrade, no título do site tem o último valor negociado, mas o valor só é atualizado quando a aba fica em primeiro plano, daí tive a idéia de fazer uma página para atualizar esse valor independentemente de qual aba do navegador fique ativa.
+Criei este projeto para resolver um problema que eu tinha. Estou estudando trade de bitcoin e utilizo a [BitCoinTrade](https://www.bitcointrade.com.br/) para fazer minhas transações. Acompanhava a cotação do bitcoin pelo próprio site da BitCoinTrade, no título do site tem o último valor negociado, mas o valor só é atualizado quando a aba fica em primeiro plano, daí tive a idéia de fazer uma página para atualizar esse valor independentemente de qual aba do navegador fique ativa.
 
 Usando a [api da BitCoinTrade](https://apidocs.bitcointrade.com.br/), trago os valores que quero e atualizo o document.title para mostrar o último valor negociado. Assim posso acompanhar as transações enquanto continuo meu trabalho.
 
