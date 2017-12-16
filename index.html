@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -11,10 +11,10 @@
     </head>
     <body style="background-color: #172B4D;">
         <div class="container">
-            <h1 class="text-light mt-5">"Tape Reading" BitCoinTrade&nbsp;<small class="text-muted">v0.1.1</small></h1>
+            <h1 class="text-light mt-4">"Tape Reading" BitCoinTrade&nbsp;<small class="text-muted">v0.1.7</small></h1>
             <span class="badge badge-warning p-1" id="dataAtualizacao">&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <div class="row mt-5">
-                <div class="col">
+                <div class="col-md-7">
                     <div class="card-columns">
                         <div class="card">
                             <div class="card-body">
@@ -26,24 +26,37 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-body">
-                                <p class="text-center"><span id="maiorValor24h"></span><br><small class="text-muted">Maior valor de negociação nas últimas 24 horas</small></p>
-                                <p class="text-center"><span id="menorValor24h"></span><br><small class="text-muted">Menor valor de negociação nas últimas 24 horas</small></p>
+                            <div class="card-body text-center">
+                                <p class="text-muted">Valor de negociação nas últimas 24h</p>
+                                <p><span id="maiorValor24h"></span><br><small class="text-muted">Maior</small></p>
+                                <p><span id="menorValor24h"></span><br><small class="text-muted">Menor</small></p>
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-body">
-                                <p class="text-center"><span id="volume24h"></span><br><small class="text-muted">Quantidade negociada nas últimas 24 horas</small></p>
-                                <p class="text-center"><span id="qtdeTrade24h"></span><br><small class="text-muted">Quantidade de trades realizados nas últimas 24 horas</small></p>
+                            <div class="card-body text-center">
+                                <p class="text-muted">Valor unitário da melhor oferta atual no book de ofertas</p>
+                                <p><span id="valUniMelhorOfertaCompra"></span><br><small class="text-muted">Compra</small></p>
+                                <p><span id="valUniMelhorOfertaVenda"></span><br><small class="text-muted">Venda</small></p>
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-body">
-                                <p class="text-center"><span id="valUniMelhorCompra"></span><br><small class="text-muted">Valor unitário da melhor oferta de compra atual no book de ofertas</small></p>
-                                <p class="text-center"><span id="valUniMelhorVenda"></span><br><small class="text-muted">Valor unitário da melhor oferta de venda atual no book de ofertas</small></p>
+                            <div class="card-body text-center">
+                                <p><span id="volume24h"></span><br><small class="text-muted">Quantidade negociada nas últimas 24 h</small></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p><span id="qtdeTrade24h"></span><br><small class="text-muted">Trades realizados nas últimas 24 h</small></p>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col text-center bg-light py-3 mx-1">
+                            <p id="qtdeTrades"></p>
+                            <!-- <ul class="list-group list-group-flush" id="listaTrades"> -->
+                            <table id="listaTrades" class="table table-sm">
+                            </table>
+                            <!--</ul>-->
                 </div>
             </div>
         </div>
@@ -76,6 +89,11 @@
             #dataAtualizacao {
                 width: 180px;
             }
+            @media only screen and (max-width: 320px) {
+                .showHide {
+                    display: none;
+                }
+            }
         </style>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -100,16 +118,53 @@
                             $('#maiorValor24h').html(response.data.high.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
                             $('#menorValor24h').html(response.data.low.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
                             $('#volume24h').html(response.data.volume.toLocaleString('pt-BR'));
-                            $('#qtdeTrade24h').html(response.data.trades_quantity.toLocaleString('pt-BR'));
-                            $('#valUniMelhorVenda').html(response.data.sell.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
-                            $('#valUniMelhorCompra').html(response.data.buy.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+                            $('#qtdeTrade24h').html(
+                                response.data.trades_quantity.toLocaleString('pt-BR')
+                                + ' ('
+                                + (response.data.trades_quantity/24/60).toLocaleString('pt-BR', {maximumFractionDigits: 2}) + '/min)'
+                            );
+                            $('#valUniMelhorOfertaVenda').html(response.data.sell.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
+                            $('#valUniMelhorOfertaCompra').html(response.data.buy.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}));
 
                             dataAtualizacao = new Date(response.data.date);
 
-                            $('#dataAtualizacao').html(dataAtualizacao.toLocaleString());
+                            $('#dataAtualizacao').html(dataAtualizacao.toLocaleString('pt-BR'));
                         }
-                        console.log(response);
+                        //console.log(response);
                         setTimeout(getTickers, 15000);
+                    });
+
+                    $.getJSON('https://api.bitcointrade.com.br/v1/public/BTC/trades?page_size=10', function (response) {
+                        //console.log(response.data.trades[0].type);
+                        var listaTrades       = '';
+                        var qtdeVendas        = 0;
+                        var qtdeCompras       = 0;
+                        var montanteEmEspecie = 0;
+
+                        response.data.trades.forEach(function(trade) {
+                            if (trade.type == 'sell') {
+                                qtdeVendas++;
+                            }
+                            if (trade.type == 'buy') {
+                                qtdeCompras++;
+                            }
+
+                            dataTrade = new Date(trade.date);
+
+                            montanteEmEspecie = trade.amount * trade.unit_price;
+
+                            //listaTrades += '<li class="list-group-item"><small>'
+                            listaTrades += '<tr>'
+                            + '<td><small>' + dataTrade.toLocaleString('pt-BR').substr(11, 8) + '</small></td>'
+                            + '<td>' + '<span class="badge badge-warning px-2 py-1">' + trade.type + '</span></td>'
+                            + '<td class="showHide"><small>' + trade.amount.toLocaleString() + '/' + montanteEmEspecie.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}) + '</small></td>'
+                            + '<td><small><strong>' + trade.unit_price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2}) + '</strong></small></td>'
+                            + '</tr>';
+                        });
+                        $('#qtdeTrades').html(qtdeVendas + ' vendas / ' + qtdeCompras + ' compras');
+
+                        $('#listaTrades').html(listaTrades);
+
                     });
                 }());
             });
