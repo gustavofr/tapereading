@@ -131,6 +131,7 @@
 
                 (function getTickers() {
                     $('#dataAtualizacao').html("&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;");
+                    document.title = 'Atualizando... - Tape Reading';
 
                     $.getJSON('https://api.bitcointrade.com.br/v1/public/BTC/ticker', function (response) {
                         if (response.message == null) {
