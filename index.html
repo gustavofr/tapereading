@@ -11,7 +11,7 @@
     </head>
     <body style="background-color: #172B4D;">
         <div class="container">
-            <h1 class="text-light mt-4">"Tape Reading" BitCoinTrade&nbsp;<small class="text-muted">v0.2</small></h1>
+            <h1 class="text-light mt-4">"Tape Reading" BitCoinTrade&nbsp;<small class="text-muted">v0.3</small></h1>
             <span class="badge badge-warning p-1" id="dataAtualizacao">&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <div class="row mt-5">
                 <div class="col-md-7">
@@ -87,8 +87,8 @@
         </footer>
         <style media="screen">
             html {
-              position: relative;
-              min-height: 100%;
+                position: relative;
+                min-height: 100%;
             }
             body {
               margin-bottom: 60px; /* Margin bottom by footer height */
@@ -128,12 +128,16 @@
             $(function() {
 
                 var tradesPorMinuto = 0;
+                // https://api.bitcointrade.com.br/v1/public/BTC/ticker
+                const TICKERENDPOINT = 'https://api.bitcointrade.com.br/v3/public/BRLBTC/ticker';
+                //https://api.bitcointrade.com.br/v1/public/BTC/trades?page_size=
+                const TRADESENDPOINT = 'https://api.bitcointrade.com.br/v3/public/BRLBTC/trades';
 
                 (function getTickers() {
                     $('#dataAtualizacao').html("&nbsp;&nbsp;&nbsp;&nbsp;atualizando...&nbsp;&nbsp;&nbsp;&nbsp;");
                     document.title = 'Atualizando... - Tape Reading';
 
-                    $.getJSON('https://api.bitcointrade.com.br/v1/public/BTC/ticker', function (response) {
+                    $.getJSON(TICKERENDPOINT, function (response) {
                         if (response.message == null) {
                             ultValNegociacao = response.data.last
                                 .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }, {minimumFractionDigits: 2});
@@ -160,7 +164,6 @@
 
                             $('#dataAtualizacao').html(dataAtualizacao.toLocaleString('pt-BR'));
                         }
-                        //console.log(response);
                         setTimeout(getTickers, 15000);
                     });
                     /*
@@ -172,7 +175,8 @@
                     end_time   = end_time.toISOString().substr(0, 19) + "-03:00";
                     */
 
-                    $.getJSON("https://api.bitcointrade.com.br/v1/public/BTC/trades?page_size=" + (tradesPorMinuto * 15).toLocaleString('pt-BR', {maximumFractionDigits: 0}), function (response) {
+                    //$.getJSON(TRADESENDPOINT + "?page_size=" + (tradesPorMinuto * 15).toLocaleString('pt-BR', {maximumFractionDigits: 0}), function (response) {
+                    $.getJSON(TRADESENDPOINT + "?page_size=" + (tradesPorMinuto * 15).toLocaleString('pt-BR', {maximumFractionDigits: 0}), function (response) {
                         var listaTrades       = '';
                         var qtdeVendas        = 0;
                         var qtdeCompras       = 0;
@@ -236,16 +240,16 @@
 
                         //https://developers.google.com/chart/interactive/docs/gallery/candlestickchart
                         var data = google.visualization.arrayToDataTable([
-                          ['', maiorTrade, abertura, fechamento, menorTrade]
+                            ['', maiorTrade, abertura, fechamento, menorTrade]
                           // Treat first row as data as well.
                         ], true);
 
                         var options = {
-                          legend:'none',
-                          candlestick: {
-                            fallingColor: { strokeWidth: 0, fill: '#a52714' }, // red
-                            risingColor: { strokeWidth: 0, fill: '#0f9d58' }   // green
-                          }
+                            legend:'none',
+                            candlestick: {
+                                fallingColor: { strokeWidth: 0, fill: '#a52714' }, // red
+                                risingColor: { strokeWidth: 0, fill: '#0f9d58' }   // green
+                            }
                         };
 
                         var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
